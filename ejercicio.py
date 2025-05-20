@@ -61,10 +61,6 @@ def obtener_datos(lista_id):
         except:
             print("Se ha producido un error en la búsqueda de trofeos.")
         lista_trofeos=[trofeo.get_attribute("title") for trofeo in aux_lista_trofeos] 
-        """
-        --Si quisiera todos los trofeos, habria que usar--
-        aux_lista_trofeos=driver.find_elements(By.XPATH,"div[@id='trophy-case']//li[@class='centered']")
-        """
 
         ## Logros
         try:
@@ -102,7 +98,8 @@ def obtener_id(nombre):
     nombre = nombre.strip().replace(" ", "+")
     pagina=1
     while True and pagina<5 :
-        url=f"https://www.strava.com/athletes/search?gsf=2&page={pagina}&page_uses_modern_javascript=true&text={nombre}&utf8=%E2%9C%93"
+        lista_usuario_id.append(f"Página {pagina}")
+        url=f"https://www.strava.com/athletes/search?gsf=2&page={pagina}&text={nombre}"
         driver.get(url)
         try:
             aux_list_id=driver.find_elements(By.XPATH,"//li[@class='row']//div[@class='athlete-details']//a[@class='athlete-name-link']")
@@ -126,7 +123,7 @@ with open("resultado1.json", "w", encoding="utf-8") as resultado:
     json.dump(informacion, resultado, ensure_ascii=False, indent=4)
 
 # Ejercicio 2
-lista_usuario_id=obtener_id("javier fernandez mata")
+lista_usuario_id=obtener_id("javier")
 
 ## Exportar resultado del ejercicio 2 en un json   
 with open("resultado2.json", "w", encoding="utf-8") as resultado:
