@@ -12,7 +12,7 @@ load_dotenv()  # Carga las variables del archivo .env
 
 # Acceder a la web
 options = Options()
-options.add_argument('--headless')
+options.add_argument("--headless")
 options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36")
 driver = webdriver.Chrome(options=options)
 driver.get("https://www.strava.com/")
@@ -24,7 +24,7 @@ for cookie in cookies:
 driver.refresh()
 
 def perfil_usuario(id):
-    url=f"https://www.strava.com/athletes/{id}"
+    url=f"https://www.strava.com/athletes/{id}" # o /pros/{id}
     driver.get(url)
 
 def obtener_datos(lista_id):
@@ -98,19 +98,19 @@ def obtener_id(nombre):
     nombre = nombre.strip().replace(" ", "+")
     pagina=1
     while True and pagina<5 :
-        lista_usuario_id.append(f"Página {pagina}")
-        url=f"https://www.strava.com/athletes/search?gsf=2&page={pagina}&text={nombre}"
+        url=f"https://www.strava.com/athletes/search?query={nombre}&page={pagina}" # url=f"https://www.strava.com/athletes/search?gsf=2&page={pagina}&text={nombre}"
         driver.get(url)
         try:
-            aux_list_id=driver.find_elements(By.XPATH,"//li[@class='row']//div[@class='athlete-details']//a[@class='athlete-name-link']")
+            aux_list_id=driver.find_elements(By.XPATH,"//li[@class='AthleteList_athleteListItem__egbVo']//div[@class='Athlete_athleteInfo__rVPKN']//a")
             if not aux_list_id:
                 break
+            lista_usuario_id.append(f"Página {pagina}")
         except:
             print("Se ha producido un error en la búsqueda de usuarios con el nombre proporcionado.")
             break
         for aux_id in aux_list_id:
             usuario=aux_id.text
-            id=aux_id.get_attribute("data-athlete-id")
+            id=aux_id.get_attribute("href").split("/")[-1]
             lista_usuario_id.append([usuario,id])
         pagina=pagina+1
     return lista_usuario_id
