@@ -7,10 +7,16 @@ Scrapea la web Strava para obtener información de perfiles.
 - Uso de cookies para autenticación alamacenadas en .env 
 
 Instala las dependencias con:
+```bash
 pip install -r requirements.txt
+```
 
-Comando para correr la imagen
+Comando para correr la imagen:
+```bash
 docker build -t strava-scraper .
+```
 
 Comando para obtener json de output
+```bash
 docker run --rm -v ruta-local\output:/app/output strava-scraper
+```
