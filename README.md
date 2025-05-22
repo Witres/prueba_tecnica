@@ -18,5 +18,5 @@ docker build -t strava-scraper .
 
 Comando para obtener json de output
 ```bash
-docker run --rm -v ruta-local\output:/app/output strava-scraper
+docker run --rm -v ruta-local/output:/app/output strava-scraper
 ```
