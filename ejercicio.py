@@ -4,11 +4,12 @@ from selenium.webdriver.common.by import By
 import os
 import json
 from dotenv import load_dotenv
+from typing import List, Dict, Union
 
 load_dotenv()  # Carga las variables del archivo .env
 
 class ScraperStrava:
-    def __init__(self):
+    def __init__(self) -> None:
         self.options = Options()
         self.options.add_argument("--headless")
         self.options.add_argument("--no-sandbox")
@@ -18,27 +19,27 @@ class ScraperStrava:
         self.cookie = json.loads(os.getenv("COOKIES"))[0]
         self.driver.add_cookie(self.cookie)  # Añade la cookie a Selenium
 
-    def perfil_usuario(self, id): # Accede al perfil del usuario con el id determinado
+    def perfil_usuario(self, id : int) -> None: # Accede al perfil del usuario con el id determinado
         url=f"https://www.strava.com/athletes/{id}"
         self.driver.get(url)
         if not (self.driver.current_url == url or self.driver.current_url == f"https://www.strava.com/pros/{id}"):
             print(f"No se ha encontrado el usuario con id {id}.")
 
-    def obtener_nombre(self): # Obtiene el nombre del perfil actual
+    def obtener_nombre(self) -> str: # Obtiene el nombre del perfil actual
         try:
             nombre = self.driver.find_element(By.XPATH,"//div[@id='athlete-profile']//h1[contains(@class,'athlete-name')]").text
         except Exception as e:
             nombre = f"Se ha producido un error en la búsqueda del nombre del usuario: {e}"
         return nombre
 
-    def obtener_localizacion(self): # Obtiene la localizacion del perfil actual
+    def obtener_localizacion(self) -> str: # Obtiene la localizacion del perfil actual
         try:
             localizacion = self.driver.find_element(By.XPATH,"//div[@id='athlete-profile']//div[@class='location']").text
         except Exception as e:
             localizacion = f"Se ha producido un error en la búsqueda de la localización del usuario: {e}"
         return localizacion
 
-    def obtener_avatar(self): # Obtiene la ruta a la imagen del avatar del perfil actual
+    def obtener_avatar(self) -> str: # Obtiene la ruta a la imagen del avatar del perfil actual
         try:
             avatar=self.driver.find_element(By.XPATH,"//div[@id='athlete-profile']//div[@class='avatar-img-wrapper']//img[@class='avatar-img']").get_attribute("src")
         except Exception as e:
@@ -46,7 +47,7 @@ class ScraperStrava:
         return avatar
 
     
-    def obtener_descripcion(self): # Obtiene la descripcion (Trofeos, Logros, Actividades) del perfil actual
+    def obtener_descripcion(self) -> Dict[str, Union[List[str], str]]: # Obtiene la descripcion (Trofeos, Logros, Actividades) del perfil actual
         # Trofeos (del resumen, no todos porque suelen ser muchos)
         try:
             aux_lista_trofeos=self.driver.find_elements(By.XPATH,"//div[@id='athlete-profile']//div[@id='trophy-case-summary']//li[@class='centered']")
@@ -82,7 +83,7 @@ class ScraperStrava:
             actividad = "Se ha producido un error en la búsqueda de actividades del usuario."
         return {"Trofeos" : lista_trofeos, "Logros" : lista_logros, "Actividad" : actividad}
 
-    def obtener_datos(self,lista_id): # Dada una lista de ids, extrae la informacion de cada uno y la almacena en diccionarios
+    def obtener_datos(self,lista_id : List[int]) -> List[Dict[str, Union[str, Dict[str, Union[List[str], str]]]]]: # Dada una lista de ids, extrae la informacion de cada uno y la almacena en diccionarios
         informacion=[]
         for id in lista_id:
             self.perfil_usuario(id)
@@ -95,7 +96,7 @@ class ScraperStrava:
             informacion.append(datos_id)
         return informacion
 
-    def obtener_id(self, nombre): # Obtiene el nombre e id de los usuarios que aparezcan en la busqueda con el nombre proporcionado
+    def obtener_id(self, nombre : str) -> List[Union[str, List[Union[str, int]]]]: # Obtiene el nombre e id de los usuarios que aparezcan en la busqueda con el nombre proporcionado
         lista_usuario_id=[]
         nombre = nombre.strip().replace(" ", "+")
         pagina=1

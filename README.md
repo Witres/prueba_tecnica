@@ -16,7 +16,7 @@ Comando para correr la imagen:
 docker build -t strava-scraper .
 ```
 
-Comando para obtener json de output
+Comando para obtener json de output:
 ```bash
 docker run --rm -v ruta-local/output:/app/output strava-scraper
 ```
