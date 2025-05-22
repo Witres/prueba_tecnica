@@ -11,7 +11,7 @@ Instala las dependencias con:
 pip install -r requirements.txt
 ```
 
-Comando para correr la imagen:
+Comando para buildear la imagen:
 ```bash
 docker build -t strava-scraper .
 ```

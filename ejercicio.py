@@ -27,21 +27,21 @@ class ScraperStrava:
 
     def obtener_nombre(self) -> str: # Obtiene el nombre del perfil actual
         try:
-            nombre = self.driver.find_element(By.XPATH,"//div[@id='athlete-profile']//h1[contains(@class,'athlete-name')]").text
+            nombre = self.driver.find_element(By.XPATH,"//h1[contains(@class,'athlete-name')]").text
         except Exception as e:
             nombre = f"Se ha producido un error en la búsqueda del nombre del usuario: {e}"
         return nombre
 
     def obtener_localizacion(self) -> str: # Obtiene la localizacion del perfil actual
         try:
-            localizacion = self.driver.find_element(By.XPATH,"//div[@id='athlete-profile']//div[@class='location']").text
+            localizacion = self.driver.find_element(By.XPATH,"//div[@class='location']").text
         except Exception as e:
             localizacion = f"Se ha producido un error en la búsqueda de la localización del usuario: {e}"
         return localizacion
 
     def obtener_avatar(self) -> str: # Obtiene la ruta a la imagen del avatar del perfil actual
         try:
-            avatar=self.driver.find_element(By.XPATH,"//div[@id='athlete-profile']//div[@class='avatar-img-wrapper']//img[@class='avatar-img']").get_attribute("src")
+            avatar=self.driver.find_element(By.XPATH,"//img[@class='avatar-img']").get_attribute("src")
         except Exception as e:
             avatar = f"Se ha producido un error en la búsqueda del avatar del usuario: {e}"
         return avatar
@@ -50,7 +50,7 @@ class ScraperStrava:
     def obtener_descripcion(self) -> Dict[str, Union[List[str], str]]: # Obtiene la descripcion (Trofeos, Logros, Actividades) del perfil actual
         # Trofeos (del resumen, no todos porque suelen ser muchos)
         try:
-            aux_lista_trofeos=self.driver.find_elements(By.XPATH,"//div[@id='athlete-profile']//div[@id='trophy-case-summary']//li[@class='centered']")
+            aux_lista_trofeos=self.driver.find_elements(By.XPATH,"//div[@id='trophy-case-summary']//li[@class='centered']")
             if not aux_lista_trofeos:
                 lista_trofeos = ["Este usuario no tiene trofeos"]
             else:
@@ -60,7 +60,7 @@ class ScraperStrava:
 
         # Logros
         try:
-            aux_lista_logros=self.driver.find_elements(By.XPATH,"//div[@id='athlete-profile']//div[@class='section athlete-achievements']//li")
+            aux_lista_logros=self.driver.find_elements(By.XPATH,"//div[@class='section athlete-achievements']//li")
             if not aux_lista_logros:
                 lista_logros = ["Este usuario no tiene logros"]
             else:
@@ -73,7 +73,7 @@ class ScraperStrava:
 
         # Actividades (en la ultima semana)
         try:
-            aux_lista_actividad=self.driver.find_elements(By.XPATH,"//div[@id='athlete-profile']//div[@id='activity-log']//ul[@id='totals']//li//strong")
+            aux_lista_actividad=self.driver.find_elements(By.XPATH,"//ul[@id='totals']//li//strong")
             if not aux_lista_actividad:
                 aux_lista_actividad = ["No se ha encontrado actividad de este usuario", "", ""]
             else:
@@ -104,7 +104,7 @@ class ScraperStrava:
             url=f"https://www.strava.com/athletes/search?query={nombre}&page={pagina}"
             self.driver.get(url)
             try:
-                aux_list_id=self.driver.find_elements(By.XPATH,"//li[@class='AthleteList_athleteListItem__egbVo']//div[@class='Athlete_athleteInfo__rVPKN']//a")
+                aux_list_id=self.driver.find_elements(By.XPATH,"//div[contains(@class, 'Athlete_athleteInfo')]//a")
                 if not aux_list_id:
                     break
                 lista_usuario_id.append(f"Página {pagina}")
@@ -120,7 +120,7 @@ class ScraperStrava:
 
 scraper = ScraperStrava()
 
-informacion=scraper.obtener_datos([26562290, 77044008, 4196733, 168489713])
+informacion=scraper.obtener_datos([26562290, 77044008, 168489713])
 lista_usuario_id=scraper.obtener_id("javier")
 
 # EJERCICIO 1
